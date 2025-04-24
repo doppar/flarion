@@ -9,7 +9,7 @@ class FlarionServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton('api-auth', fn($app) => new ApiAuthenticate());
+        $this->app->singleton('api-auth', ApiAuthenticate::class);
 
         $this->mergeConfig(
             __DIR__ . '/config/flarion.php',
