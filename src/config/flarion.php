@@ -1,39 +1,6 @@
 <?php
 
-use Doppar\Flarion\Flarion;
-
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Stateful Domains
-    |--------------------------------------------------------------------------
-    |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
-    |
-    */
-
-    'stateful' => explode(',', env('FLARION_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Flarion::applicationUrlWithPort()
-    ))),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Sanctum Guards
-    |--------------------------------------------------------------------------
-    |
-    | This array contains the authentication guards that will be checked when
-    | Sanctum is trying to authenticate a request. If none of these guards
-    | are able to authenticate the request, Sanctum will use the bearer
-    | token that's present on an incoming request for authentication.
-    |
-    */
-
-    'guard' => ['web'],
 
     /*
     |--------------------------------------------------------------------------
@@ -46,7 +13,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => 5,
 
     /*
     |--------------------------------------------------------------------------

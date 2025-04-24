@@ -42,7 +42,7 @@ class AuthenticateApi implements Middleware
         }
 
         if ($this->auth->token()->hasExpired()) {
-            return response()->json(['message' => 'Token has been expired.'], 401);
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
         if ($ability && $this->auth->token()->cant($ability)) {

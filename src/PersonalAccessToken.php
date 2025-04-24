@@ -59,13 +59,14 @@ class PersonalAccessToken extends Model
         ?DateTimeInterface $expiresAt = null
     ) {
         $token = $this->generateTokenString();
+        $expiration = (int) config('flarion.expiration');
 
         $personalAccessToken = static::create([
             'user_id' => $user->id,
             'name' => $name,
             'token' => $token,
             'abilities' => json_encode($abilities),
-            'expires_at' => $expiresAt,
+            'expires_at' => $expiration ? now()->addMinutes($expiration) : $expiresAt,
         ]);
 
         return new NewAccessToken($personalAccessToken, $token);
@@ -133,14 +134,33 @@ class PersonalAccessToken extends Model
     /**
      * Determine if the token has a given ability.
      *
-     * @param  string  $ability
+     * @param string $ability
      * @return bool
      */
     public function can($ability)
     {
-        $abilities = $this->getAbilitiesAttribute();
+        $isMultipleAbilityPassed = Str::contains($ability, '&');
 
-        return in_array('*', $abilities) || in_array($ability, $abilities);
+        if ($isMultipleAbilityPassed) {
+            $abilities = explode('&', $ability);
+            $abilities = array_map('trim', $abilities);
+        } else {
+            $abilities = [$ability];
+        }
+
+        $userAbilities = $this->getAbilitiesAttribute();
+
+        if (in_array('*', $userAbilities)) {
+            return true;
+        }
+
+        foreach ($abilities as $ability) {
+            if (!in_array($ability, $userAbilities)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -171,7 +191,6 @@ class PersonalAccessToken extends Model
      */
     public function hasExpired(): bool
     {
-        // If no expiration date, token never expires
         if (is_null($this->expires_at)) {
             return false;
         }

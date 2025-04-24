@@ -41,7 +41,7 @@ trait Tokenable
      */
     public function currentAccessToken()
     {
-        return $this->accessToken;
+        return app('api-auth')->token()?->token;
     }
 
     /**

@@ -1,18 +1,45 @@
 {
-  "name": "doppar/flarion",
-  "description": "Doppar API Authentication package",
-  "type": "library",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Doppar\\Flarion\\": "src/"
-    }
-  },
-  "authors": [
-    {
-      "name": "Mahedi Hasan"
-    }
-  ],
-  "minimum-stability": "dev",
-  "require": {}
+    "name": "doppar/flarion",
+    "description": "Doppar API Authentication package",
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/doppar/flarion/issues",
+        "source": "https://github.com/doppar/flarion"
+    },
+    "authors": [
+        {
+            "name": "Mahedi Hasan",
+            "email": "mahedi@doppar.com"
+        }
+    ],
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^11.5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Doppar\\Flarion\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Doppar\\Flarion\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        },
+        "doppar": {
+            "providers": [
+                "Doppar\\Flarion\\FlarionServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
