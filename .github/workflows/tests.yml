@@ -20,14 +20,9 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.3, 8.4]
+
+    name: PHP ${{ matrix.php }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup PHP
-        with:
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
-          coverage: none
-
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
