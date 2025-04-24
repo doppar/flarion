@@ -15,7 +15,7 @@
 
 > **Note:** This repository contains the core code of the Doppar framework flarion package. If you want to build an application using Doppar, visit the main [Doppar repository](https://github.com/doppar/doppar).
 
-`Doppar Flarion` is a cutting-edge API authentication and authorization package designed to revolutionize how developers build secure, scalable, and high-performance APIs. With a focus on simplicity, flexibility, and robustness, Doppar Flarion empowers developers to implement authentication flows effortlessly while ensuring top-tier security and efficiency across all layers of their applications.
+Doppar Flarion is a cutting-edge API authentication and authorization package designed to revolutionize how developers build secure, scalable, and high-performance APIs. With a focus on simplicity, flexibility, and robustness, Doppar Flarion empowers developers to implement authentication flows effortlessly while ensuring top-tier security and efficiency across all layers of their applications.
 
 ## Contributing
 
