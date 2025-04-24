@@ -26,7 +26,7 @@ class PersonalAccessToken extends Model
      * @var array
      */
     protected $unexposable = [
-        //
+        'token'
     ];
 
     /**

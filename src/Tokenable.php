@@ -32,15 +32,6 @@ trait Tokenable
         return app(PersonalAccessToken::class)->createToken($this, $name, $abilities, $expireAt);
     }
 
-    public function debugTokenState()
-    {
-        return [
-            'accessToken_set' => !is_null($this->accessToken),
-            'accessToken_class' => $this->accessToken ? get_class($this->accessToken) : null,
-            'auth_user_match' => $this === auth()->user(),
-        ];
-    }
-
     /**
      * Get the access token currently associated with the user.
      * Note: This only works on the user instance returned by the authentication system.
