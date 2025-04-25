@@ -37,6 +37,11 @@
             ]
         }
     },
+    "scripts": {
+        "post-install-cmd": [
+            "rm -f .styleci.yml .editorconfig .gitattributes .gitignore phpunit.xml.dist UPGRADE.md LICENSE.md"
+        ]
+    },
     "config": {
         "sort-packages": true
     },
