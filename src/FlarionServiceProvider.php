@@ -7,9 +7,14 @@ use Doppar\Flarion\ApiAuthenticate;
 
 class FlarionServiceProvider extends ServiceProvider
 {
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
     public function register()
     {
-        $this->app->singleton('api-auth', ApiAuthenticate::class);
+        $this->app->singleton(ApiAuthenticate::class, ApiAuthenticate::class);
 
         $this->mergeConfig(
             __DIR__ . '/config/flarion.php',
@@ -17,6 +22,11 @@ class FlarionServiceProvider extends ServiceProvider
         );
     }
 
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
     public function boot()
     {
         $this->loadMigrations(__DIR__ . '/database/migrations');

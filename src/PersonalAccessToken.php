@@ -115,7 +115,7 @@ class PersonalAccessToken extends Model
     /**
      * Find the token instance matching the given token.
      *
-     * @param  string  $token
+     * @param string $token
      * @return static|null
      */
     public static function findToken($token)

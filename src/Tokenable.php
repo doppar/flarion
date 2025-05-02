@@ -41,7 +41,7 @@ trait Tokenable
      */
     public function currentAccessToken()
     {
-        $this->accessToken = app('api-auth')->token();
+        $this->accessToken = app(ApiAuthenticate::class)->token();
 
         return $this->accessToken;
     }
@@ -54,7 +54,7 @@ trait Tokenable
      */
     public function tokenCan(string $ability)
     {
-        $this->accessToken = app('api-auth')->token();
+        $this->accessToken = app(ApiAuthenticate::class)->token();
 
         return $this->accessToken->can($ability);
     }

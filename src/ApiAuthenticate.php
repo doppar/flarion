@@ -28,6 +28,8 @@ class ApiAuthenticate
      */
     public function check(): bool
     {
+        $this->token();
+
         return $this->user() !== null;
     }
 

@@ -5,6 +5,7 @@ namespace Doppar\Flarion\Http\Middleware;
 use Phaseolies\Middleware\Contracts\Middleware;
 use Phaseolies\Http\Response;
 use Phaseolies\Http\Request;
+use Doppar\Flarion\ApiAuthenticate;
 use Closure;
 
 class AuthenticateApi implements Middleware
@@ -14,7 +15,7 @@ class AuthenticateApi implements Middleware
      *
      * @var \Phaseolies\Flarion\ApiAuthenticate
      */
-    protected $auth;
+    protected ApiAuthenticate $auth;
 
     /**
      * Create a new middleware instance.
@@ -22,9 +23,9 @@ class AuthenticateApi implements Middleware
      * @param \Phaseolies\Flarion\ApiAuthenticate $auth
      * @return void
      */
-    public function __construct()
+    public function __construct(ApiAuthenticate $apiAuthenticate)
     {
-        $this->auth = app('api-auth');
+        $this->auth = $apiAuthenticate;
     }
 
     /**
@@ -42,7 +43,7 @@ class AuthenticateApi implements Middleware
         }
 
         if ($this->auth->token()->hasExpired()) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
+            return response()->json(['message' => 'Token expired.'], 401);
         }
 
         if ($ability && $this->auth->token()->cant($ability)) {
