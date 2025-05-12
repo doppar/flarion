@@ -41,7 +41,7 @@ class PersonalAccessToken extends Model
      */
     public function user()
     {
-        return $this->oneToOne(User::class, 'id', 'user_id');
+        return $this->bindTo(User::class, 'id', 'user_id');
     }
 
     /**

@@ -16,7 +16,7 @@ trait Tokenable
      */
     public function tokens()
     {
-        return $this->oneToMany(PersonalAccessToken::class, 'user_id', 'id');
+        return $this->linkMany(PersonalAccessToken::class, 'user_id', 'id');
     }
 
     /**
