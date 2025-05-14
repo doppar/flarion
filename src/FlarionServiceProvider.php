@@ -32,8 +32,11 @@ class FlarionServiceProvider extends ServiceProvider
         $this->loadMigrations(__DIR__ . '/database/migrations');
 
         $this->publishes([
-            __DIR__ . '/config/flarion.php' => config_path('flarion.php'),
             __DIR__ . '/database/migrations' => database_path('migrations'),
-        ]);
+        ], 'migrations');
+
+        $this->publishes([
+            __DIR__ . '/config/flarion.php' => config_path('flarion.php'),
+        ], 'config');
     }
 }
