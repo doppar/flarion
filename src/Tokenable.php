@@ -27,22 +27,18 @@ trait Tokenable
      * @param array $abilities
      * @return \Doppar\Flarion\NewAccessToken
      */
-    public function createToken(string $name, $expireAt = null, array $abilities = ['*'])
+    public function createToken(string $name, $expireAt = null, array $abilities = ['*']): NewAccessToken
     {
         return app(PersonalAccessToken::class)->createToken($this, $name, $abilities, $expireAt);
     }
 
     /**
      * Get the access token currently associated with the user.
-     * Note: This only works on the user instance returned by the authentication system.
-     * Creating a new user instance will not have the token association.
      *
      * @return \Doppar\Flarion\PersonalAccessToken|null
      */
-    public function currentAccessToken()
+    public function currentAccessToken(): ?PersonalAccessToken
     {
-        $this->accessToken = app(ApiAuthenticate::class)->token();
-
         return $this->accessToken;
     }
 
@@ -52,10 +48,8 @@ trait Tokenable
      * @param string $ability
      * @return bool
      */
-    public function tokenCan(string $ability)
+    public function tokenCan(string $ability): bool
     {
-        $this->accessToken = app(ApiAuthenticate::class)->token();
-
         return $this->accessToken->can($ability);
     }
 
@@ -65,7 +59,7 @@ trait Tokenable
      * @param PersonalAccessToken $accessToken
      * @return $this
      */
-    public function withAccessToken($accessToken)
+    public function withAccessToken(PersonalAccessToken $accessToken): self
     {
         $this->accessToken = $accessToken;
 

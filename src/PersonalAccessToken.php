@@ -14,8 +14,8 @@ class PersonalAccessToken extends Model
     protected $creatable = [
         'user_id',
         'name',
-        'token',
         'abilities',
+        'lookup_hash',
         'last_used_at',
         'expires_at'
     ];
@@ -26,7 +26,8 @@ class PersonalAccessToken extends Model
      * @var array
      */
     protected $unexposable = [
-        'token'
+        'token',
+        'lookup_hash',
     ];
 
     /**
@@ -52,20 +53,18 @@ class PersonalAccessToken extends Model
      * @param array $abilities
      * @return \Doppar\Flarion\NewAccessToken
      */
-    public function createToken(
-        User $user,
-        string $name,
-        array $abilities = ['*'],
-        ?DateTimeInterface $expiresAt = null
-    ) {
+    public function createToken(User $user, string $name,  array $abilities = ['*'], ?DateTimeInterface $expiresAt = null): NewAccessToken
+    {
         $token = $this->generateTokenString();
         $expiration = (int) config('flarion.expiration');
+
+        $lookupHash = hash_hmac('sha256', $token, config('app.key'));
 
         $personalAccessToken = static::create([
             'user_id' => $user->id,
             'name' => $name,
-            'token' => $token,
             'abilities' => json_encode($abilities),
+            'lookup_hash' => $lookupHash,
             'expires_at' => $expiration ? now()->addMinutes($expiration) : $expiresAt,
         ]);
 
@@ -77,13 +76,13 @@ class PersonalAccessToken extends Model
      *
      * @return string
      */
-    public function generateTokenString()
+    public function generateTokenString(): string
     {
         return sprintf(
             '%s%s%s',
             config('flarion.token_prefix', ''),
-            $token = Str::random(40),
-            hash('crc32b', $token)
+            $token = config('flarion.token_prefix', '') . bin2hex(random_bytes(40)),
+            hash('crc32b', (string) $token)
         );
     }
 
@@ -92,11 +91,12 @@ class PersonalAccessToken extends Model
      *
      * @return array
      */
-    public function getAbilitiesAttribute()
+    public function getAbilitiesAttribute(): array
     {
         if ($this->abilitiesArray === null) {
             $this->abilitiesArray = json_decode($this->attributes['abilities'] ?? '[]', true) ?? [];
         }
+
         return $this->abilitiesArray;
     }
 
@@ -106,7 +106,7 @@ class PersonalAccessToken extends Model
      * @param  mixed  $value
      * @return void
      */
-    public function setAbilitiesAttribute($value)
+    public function setAbilitiesAttribute($value): void
     {
         $this->abilitiesArray = is_array($value) ? $value : [];
         $this->attributes['abilities'] = json_encode($this->abilitiesArray);
@@ -118,17 +118,24 @@ class PersonalAccessToken extends Model
      * @param string $token
      * @return static|null
      */
-    public static function findToken($token)
+    public static function findToken($token): ?PersonalAccessToken
     {
-        if (strpos($token, '|') === false) {
-            return static::query()->where('token', '=', $token)->first();
-        }
+        return static::findMatchingToken($token);
+    }
 
-        [$id, $token] = explode('|', $token, 2);
+    /**
+     * Find token by checking hash.
+     *
+     * @param string $token
+     * @return PersonalAccessToken|null
+     */
+    protected static function findMatchingToken($token): ?PersonalAccessToken
+    {
+        $lookupHash = hash_hmac('sha256', $token, config('app.key'));
 
-        return static::query()->where('id', '=', $id)
-            ->where('token', '=', $token)
-            ->first();
+        $tokenInstance = static::where('lookup_hash', $lookupHash)->first();
+
+        return $tokenInstance ?? null;
     }
 
     /**

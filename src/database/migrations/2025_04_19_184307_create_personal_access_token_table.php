@@ -18,10 +18,10 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class, true, true);
             $table->string('name');
-            $table->string('token', 64)->unique();
             $table->json('abilities')->nullable();
+            $table->string('lookup_hash', 64)->unique()->index();
             $table->datetime('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->timestamp('expires_at')->nullable()->index();
             $table->timestamps();
         });
     }
