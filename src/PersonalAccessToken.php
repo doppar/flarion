@@ -3,7 +3,7 @@
 namespace Doppar\Flarion;
 
 use Phaseolies\Support\Facades\Str;
-use Phaseolies\Database\Eloquent\Model;
+use Phaseolies\Database\Entity\Model;
 use DateTimeInterface;
 use App\Models\User;
 
