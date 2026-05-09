@@ -2,10 +2,11 @@
 
 namespace Doppar\Flarion;
 
+use Phaseolies\Providers\GhostableProvider;
 use Phaseolies\Providers\ServiceProvider;
 use Doppar\Flarion\ApiAuthenticate;
 
-class FlarionServiceProvider extends ServiceProvider
+class FlarionServiceProvider extends ServiceProvider implements GhostableProvider
 {
     /**
      * Register any application services.
@@ -38,5 +39,17 @@ class FlarionServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config/flarion.php' => config_path('flarion.php'),
         ], 'config');
+    }
+
+    /**
+     * Get the services that should ghost-load this provider.
+     *
+     * @return array<int, string>
+     */
+    public function ghosts(): array
+    {
+        return [
+            ApiAuthenticate::class,
+        ];
     }
 }
