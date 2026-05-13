@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.1.5 - 2026-05-13
+
+### What's Changed
+
+* removed branch alias from composer.json by [@techmahedy](https://github.com/techmahedy) in https://github.com/doppar/flarion/pull/3
+
+**Full Changelog**: https://github.com/doppar/flarion/compare/v1.1.4...v1.1.5
+
 ## v1.1.4 - 2026-05-09
 
 ### What's Changed
