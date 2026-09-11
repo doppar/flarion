@@ -13,14 +13,14 @@ class AuthenticateApi implements Middleware
     /**
      * The authentication guard.
      *
-     * @var \Phaseolies\Flarion\ApiAuthenticate
+     * @var ApiAuthenticate
      */
     protected ApiAuthenticate $auth;
 
     /**
      * Create a new middleware instance.
      *
-     * @param \Phaseolies\Flarion\ApiAuthenticate $auth
+     * @param ApiAuthenticate $apiAuthenticate
      * @return void
      */
     public function __construct(ApiAuthenticate $apiAuthenticate)
