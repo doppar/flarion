@@ -2,11 +2,11 @@
 
 namespace Doppar\Flarion;
 
-use Phaseolies\Providers\GhostableProvider;
-use Phaseolies\Providers\ServiceProvider;
+use Phaseolies\Launchers\GhostableLauncher;
+use Phaseolies\Launchers\ServiceLauncher;
 use Doppar\Flarion\ApiAuthenticate;
 
-class FlarionServiceProvider extends ServiceProvider implements GhostableProvider
+class FlarionLauncher extends ServiceLauncher implements GhostableLauncher
 {
     /**
      * Register any application services.
@@ -28,12 +28,12 @@ class FlarionServiceProvider extends ServiceProvider implements GhostableProvide
      *
      * @return void
      */
-    public function boot()
+    public function launch()
     {
         $this->loadMigrations(__DIR__ . '/database/migrations');
 
         $this->publishes([
-            __DIR__ . '/database/migrations' => database_path('migrations'),
+            __DIR__ . '/database/migrations' => schema_path('migrations'),
         ], 'migrations');
 
         $this->publishes([
