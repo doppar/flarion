@@ -1,0 +1,163 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Doppar\\Flarion\\PersonalAccessToken\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Call to an undefined static method Phaseolies\\Support\\Facades\\Str\:\:startsWith\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Cannot access property \$user on Doppar\\Flarion\\PersonalAccessToken\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Cannot call method fill\(\) on Doppar\\Flarion\\PersonalAccessToken\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Cannot call method save\(\) on Doppar\\Flarion\\PersonalAccessToken\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Method Doppar\\Flarion\\ApiAuthenticate\:\:user\(\) has invalid return type App\\Models\\User\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Property Doppar\\Flarion\\ApiAuthenticate\:\:\$user has unknown class App\\Models\\User as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/ApiAuthenticate.php
+
+		-
+			message: '#^Cannot call method cant\(\) on Doppar\\Flarion\\PersonalAccessToken\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Http/Middleware/AuthenticateApi.php
+
+		-
+			message: '#^Cannot call method hasExpired\(\) on Doppar\\Flarion\\PersonalAccessToken\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Http/Middleware/AuthenticateApi.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(\\Closure\(\\Phaseolies\\Http\\Request\) \$next\)\: Unexpected token "\(", expected variable at offset 99 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Http/Middleware/AuthenticateApi.php
+
+		-
+			message: '#^Access to an undefined property Doppar\\Flarion\\PersonalAccessToken\:\:\$expires_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Access to property \$id on an unknown class App\\Models\\User\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Call to an undefined static method Doppar\\Flarion\\PersonalAccessToken\:\:where\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Call to an undefined static method Phaseolies\\Support\\Facades\\Str\:\:contains\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Method Doppar\\Flarion\\PersonalAccessToken\:\:createToken\(\) has parameter \$abilities with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Method Doppar\\Flarion\\PersonalAccessToken\:\:findToken\(\) should return static\(Doppar\\Flarion\\PersonalAccessToken\)\|null but returns Doppar\\Flarion\\PersonalAccessToken\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Method Doppar\\Flarion\\PersonalAccessToken\:\:getAbilitiesAttribute\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Method Doppar\\Flarion\\PersonalAccessToken\:\:user\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Parameter \$user of method Doppar\\Flarion\\PersonalAccessToken\:\:createToken\(\) has invalid type App\\Models\\User\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Property Doppar\\Flarion\\PersonalAccessToken\:\:\$abilitiesArray type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Property Doppar\\Flarion\\PersonalAccessToken\:\:\$creatable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Property Doppar\\Flarion\\PersonalAccessToken\:\:\$unexposable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/PersonalAccessToken.php
+
+		-
+			message: '#^Trait Doppar\\Flarion\\Tokenable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Tokenable.php
+
+		-
+			message: '#^Call to an undefined static method Phaseolies\\Support\\Facades\\Schema\:\:create\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/database/migrations/2025_04_19_184307_create_personal_access_token_table.php
+
+		-
+			message: '#^Call to an undefined static method Phaseolies\\Support\\Facades\\Schema\:\:dropIfExists\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/database/migrations/2025_04_19_184307_create_personal_access_token_table.php
+
+		-
+			message: '#^Class App\\Models\\User not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/database/migrations/2025_04_19_184307_create_personal_access_token_table.php
