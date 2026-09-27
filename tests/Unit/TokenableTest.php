@@ -61,7 +61,32 @@ class TokenableTest extends DatabaseTestCase
         $this->assertSame(['*'], $result->accessToken->getAbilitiesAttribute());
     }
 
-    public function test_tokens_relationship_returns_the_users_tokens()
+    public function test_rotate_token_replaces_the_old_token_and_preserves_metadata(): void
+    {
+        $user = $this->createUser();
+        $old = $user->createToken("mobile", new \DateTimeImmutable("+5 days"), ["posts:read"]);
+        $oldToken = $old->accessToken;
+
+        $new = $user->rotateToken($oldToken);
+
+        $this->assertNotSame($old->plainTextToken, $new->plainTextToken);
+        $this->assertSame("mobile", $new->accessToken->name);
+        $this->assertSame(["posts:read"], $new->accessToken->getAbilitiesAttribute());
+        $this->assertNull(PersonalAccessToken::findToken($old->plainTextToken));
+        $this->assertNotNull(PersonalAccessToken::findToken($new->plainTextToken));
+    }
+
+    public function test_rotate_token_rejects_a_token_owned_by_another_user(): void
+    {
+        $user = $this->createUser();
+        $other = $this->createUser(["email" => "other@example.com"]);
+        $token = $other->createToken("other")->accessToken;
+
+        $this->expectException(\InvalidArgumentException::class);
+        $user->rotateToken($token);
+    }
+
+    public function test_tokens_relationship_returns_the_users_tokens(): void
     {
         $user = $this->createUser();
         $user->createToken('token-a');

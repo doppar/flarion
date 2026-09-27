@@ -3,7 +3,6 @@
 use Phaseolies\Support\Facades\Schema;
 use Phaseolies\Database\Migration\Migration;
 use Phaseolies\Database\Migration\Blueprint;
-use App\Models\User;
 
 return new class extends Migration
 {
@@ -14,9 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('personal_access_token', function (Blueprint $table) {
+        $model = config('auth.actors.api.model');
+
+        Schema::create('personal_access_token', function (Blueprint $table) use ($model) {
             $table->id();
-            $table->foreignIdFor(User::class, true, true);
+            $table->foreignIdFor($model, true, true);
             $table->string('name');
             $table->json('abilities')->nullable();
             $table->string('lookup_hash', 64)->unique()->index();

@@ -3,9 +3,9 @@
 namespace Doppar\Flarion\Tests\Support;
 
 use Doppar\Flarion\Tokenable;
-use Phaseolies\Database\Entity\Model;
+use Phaseolies\Auth\Authable;
 
-class User extends Model
+class User extends Authable
 {
     use Tokenable;
 

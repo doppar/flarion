@@ -4,13 +4,23 @@ namespace Doppar\Flarion;
 
 use Phaseolies\Support\Facades\Str;
 use Phaseolies\Database\Entity\Model;
+use Phaseolies\Auth\Authable;
 use DateTimeInterface;
-use App\Models\User;
 
 class PersonalAccessToken extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'personal_access_token';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $creatable = [
         'user_id',
         'name',
@@ -42,33 +52,57 @@ class PersonalAccessToken extends Model
      */
     public function user()
     {
-        return $this->bindTo(User::class, 'id', 'user_id');
+        return $this->bindTo($this->userModel(), 'id', 'user_id');
     }
 
     /**
      * Create a new personal access token.
      *
-     * @param \App\Models\User $user
+     * @param \Phaseolies\Auth\Authable $user
      * @param string $name
      * @param array $abilities
      * @return \Doppar\Flarion\NewAccessToken
      */
-    public function createToken(User $user, string $name,  array $abilities = ['*'], ?DateTimeInterface $expiresAt = null): NewAccessToken
+    public function createToken(Authable $user, string $name, array $abilities = ['*'], DateTimeInterface|string|null $expiresAt = null): NewAccessToken
     {
         $token = $this->generateTokenString();
         $expiration = (int) config('flarion.expiration');
 
         $lookupHash = hash_hmac('sha256', $token, config('app.key'));
 
+        $expiresAt = $expiration ? now()->addMinutes($expiration) : $expiresAt;
+
+        if ($expiresAt instanceof DateTimeInterface) {
+            $expiresAt = $expiresAt->format('Y-m-d H:i:s');
+        }
+
         $personalAccessToken = static::create([
             'user_id' => $user->id,
             'name' => $name,
             'abilities' => json_encode($abilities),
             'lookup_hash' => $lookupHash,
-            'expires_at' => $expiration ? now()->addMinutes($expiration) : $expiresAt,
+            'expires_at' => $expiresAt,
         ]);
 
         return new NewAccessToken($personalAccessToken, $token);
+    }
+
+    /**
+     * Resolve the Authable model configured for the default authentication actor.
+     *
+     * @return class-string<Authable>
+     */
+    protected function userModel(): string
+    {
+        $model = config('auth.actors.api.model');
+
+        if (!is_string($model) || !is_a($model, Authable::class, true)) {
+            throw new \InvalidArgumentException(
+                'Flarion user model must extend ' . Authable::class . '.'
+            );
+        }
+
+        return $model;
     }
 
     /**

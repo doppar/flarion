@@ -2,6 +2,7 @@
 
 namespace Doppar\Flarion;
 
+
 trait Tokenable
 {
     /**
@@ -33,6 +34,31 @@ trait Tokenable
     }
 
     /**
+     * Replace an owned personal access token and revoke the old token.
+     *
+     * @param PersonalAccessToken $oldToken
+     * @return NewAccessToken
+     */
+    public function rotateToken(PersonalAccessToken $oldToken): NewAccessToken
+    {
+        if ((string) $oldToken->user_id !== (string) $this->getAuthIdentifier()) {
+            throw new \InvalidArgumentException('The token does not belong to this user.');
+        }
+
+        $expiresAt = $oldToken->expires_at;
+
+        $newToken = $this->createToken(
+            $oldToken->name,
+            $expiresAt,
+            $oldToken->getAbilitiesAttribute()
+        );
+
+        $oldToken->delete();
+
+        return $newToken;
+    }
+
+    /**
      * Get the access token currently associated with the user.
      *
      * @return \Doppar\Flarion\PersonalAccessToken|null
@@ -57,7 +83,7 @@ trait Tokenable
      * Set the current access token for the user.
      *
      * @param PersonalAccessToken $accessToken
-     * @return $this
+     * @return self
      */
     public function withAccessToken(PersonalAccessToken $accessToken): self
     {

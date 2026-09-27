@@ -30,6 +30,7 @@ abstract class DatabaseTestCase extends TestCase
         Config::set('app.key', 'base64:7n/+NIB4i3LQ6+ZbrclxuwyEqG5Uprufs90NJGL2pls=');
         Config::set('flarion.expiration', null);
         Config::set('flarion.token_prefix', '');
+        Config::set('auth.actors.api.model', User::class);
 
         $this->pdo = new PDO('sqlite::memory:');
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
