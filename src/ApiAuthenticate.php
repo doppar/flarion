@@ -10,7 +10,7 @@ class ApiAuthenticate
     /**
      * The currently authenticated user.
      *
-     * @var \App\Models\User|null
+     * @var \Phaseolies\Auth\Authable|null
      */
     protected $user;
 
@@ -34,7 +34,7 @@ class ApiAuthenticate
     /**
      * Get the currently authenticated user.
      *
-     * @return \App\Models\User|null
+     * @return \Phaseolies\Auth\Authable|null
      */
     public function user()
     {
