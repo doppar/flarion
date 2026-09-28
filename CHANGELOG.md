@@ -1,5 +1,13 @@
 # Release Notes
 
+## v4.1.0 - 2026-09-27
+
+### What's Changed
+
+* (feat) Flarion token rotation with Authable API actors by [@techmahedy](https://github.com/techmahedy) in https://github.com/doppar/flarion/pull/9
+
+**Full Changelog**: https://github.com/doppar/flarion/compare/4.0.0...v4.1.0
+
 ## 4.0.0 - 2026-09-16
 
 ### What's Changed
