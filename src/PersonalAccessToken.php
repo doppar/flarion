@@ -22,7 +22,8 @@ class PersonalAccessToken extends Model
      * @var array
      */
     protected $creatable = [
-        'user_id',
+        'actor',
+        'tokenable_id',
         'name',
         'abilities',
         'lookup_hash',
@@ -48,11 +49,19 @@ class PersonalAccessToken extends Model
     protected $abilitiesArray = null;
 
     /**
-     * Get the access tokens that belong to the user.
+     * Get the model that owns the token, resolved through its actor.
+     */
+    public function tokenable()
+    {
+        return $this->bindTo(Actors::model($this->actor), 'id', 'tokenable_id');
+    }
+
+    /**
+     * Alias of tokenable() kept so `$token->user` keeps working.
      */
     public function user()
     {
-        return $this->bindTo($this->userModel(), 'id', 'user_id');
+        return $this->tokenable();
     }
 
     /**
@@ -61,10 +70,26 @@ class PersonalAccessToken extends Model
      * @param \Phaseolies\Auth\Authable $user
      * @param string $name
      * @param array $abilities
+     * @param DateTimeInterface|string|null $expiresAt
+     * @param string|null $actor
      * @return \Doppar\Flarion\NewAccessToken
      */
-    public function createToken(Authable $user, string $name, array $abilities = ['*'], DateTimeInterface|string|null $expiresAt = null): NewAccessToken
+    public function createToken(Authable $user, string $name, array $abilities = ['*'], DateTimeInterface|string|null $expiresAt = null, ?string $actor = null): NewAccessToken
     {
+        $actor ??= Actors::forModel($user::class);
+
+        if ($actor === null) {
+            throw new \InvalidArgumentException(
+                'No Flarion actor is configured for [' . $user::class . ']. Add one to config/flarion.php.'
+            );
+        }
+
+        if (!is_a($user, Actors::model($actor))) {
+            throw new \InvalidArgumentException(
+                'The model [' . $user::class . "] cannot own tokens for the [{$actor}] actor."
+            );
+        }
+
         $token = $this->generateTokenString();
         $expiration = (int) config('flarion.expiration');
 
@@ -77,7 +102,8 @@ class PersonalAccessToken extends Model
         }
 
         $personalAccessToken = static::create([
-            'user_id' => $user->id,
+            'actor' => $actor,
+            'tokenable_id' => $user->getAuthIdentifier(),
             'name' => $name,
             'abilities' => json_encode($abilities),
             'lookup_hash' => $lookupHash,
@@ -85,24 +111,6 @@ class PersonalAccessToken extends Model
         ]);
 
         return new NewAccessToken($personalAccessToken, $token);
-    }
-
-    /**
-     * Resolve the Authable model configured for the default authentication actor.
-     *
-     * @return class-string<Authable>
-     */
-    protected function userModel(): string
-    {
-        $model = config('auth.actors.api.model');
-
-        if (!is_string($model) || !is_a($model, Authable::class, true)) {
-            throw new \InvalidArgumentException(
-                'Flarion user model must extend ' . Authable::class . '.'
-            );
-        }
-
-        return $model;
     }
 
     /**

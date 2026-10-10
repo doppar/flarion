@@ -161,7 +161,7 @@ class ApiAuthenticateTest extends DatabaseTestCase
         $auth->check();
     }
 
-    public function test_get_token_from_request_prefers_bearer_token()
+    public function test_get_token_from_request_uses_the_bearer_token()
     {
         $request = new Request();
         $request->headers->set('Authorization', 'Bearer bearer-token');
@@ -174,16 +174,40 @@ class ApiAuthenticateTest extends DatabaseTestCase
         $this->assertSame('bearer-token', $auth->exposedGetTokenFromRequest());
     }
 
-    public function test_get_token_from_request_falls_back_to_cookie_when_no_bearer_token()
+    public function test_get_token_from_request_ignores_cookie_and_input_tokens_by_default()
     {
-        $request = new Request();
-        Container::getInstance()->instance('request', $request);
-
+        Container::getInstance()->instance('request', new Request([], ['api_token' => 'input-token']));
         $_COOKIE['api_token'] = 'cookie-token';
 
-        $auth = new InjectableApiAuthenticate();
+        $this->assertNull((new InjectableApiAuthenticate())->exposedGetTokenFromRequest());
+    }
 
-        $this->assertSame('cookie-token', $auth->exposedGetTokenFromRequest());
+    public function test_get_token_from_request_reads_the_cookie_when_enabled()
+    {
+        Config::set('flarion.token_sources', ['header', 'cookie']);
+        Container::getInstance()->instance('request', new Request());
+        $_COOKIE['api_token'] = 'cookie-token';
+
+        $this->assertSame('cookie-token', (new InjectableApiAuthenticate())->exposedGetTokenFromRequest());
+    }
+
+    public function test_get_token_from_request_reads_input_when_enabled()
+    {
+        Config::set('flarion.token_sources', ['header', 'input']);
+        Container::getInstance()->instance('request', new Request([], ['api_token' => 'input-token']));
+
+        $this->assertSame('input-token', (new InjectableApiAuthenticate())->exposedGetTokenFromRequest());
+    }
+
+    public function test_enabled_sources_are_read_in_configured_order()
+    {
+        Config::set('flarion.token_sources', ['header', 'input', 'cookie']);
+        $request = new Request([], ['api_token' => 'input-token']);
+        $request->headers->set('Authorization', 'Bearer bearer-token');
+        Container::getInstance()->instance('request', $request);
+        $_COOKIE['api_token'] = 'cookie-token';
+
+        $this->assertSame('bearer-token', (new InjectableApiAuthenticate())->exposedGetTokenFromRequest());
     }
 
     public function test_get_token_from_request_returns_null_when_nothing_is_present()
