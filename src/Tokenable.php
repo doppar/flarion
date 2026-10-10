@@ -2,6 +2,7 @@
 
 namespace Doppar\Flarion;
 
+
 trait Tokenable
 {
     /**
@@ -16,7 +17,21 @@ trait Tokenable
      */
     public function tokens()
     {
-        return $this->linkMany(PersonalAccessToken::class, 'user_id', 'id');
+        return $this->linkMany(PersonalAccessToken::class, 'tokenable_id', 'id')
+            ->where('actor', $this->tokenActor());
+    }
+
+    /**
+     * Get the Flarion actor this model authenticates as.
+     *
+     * @return string
+     */
+    public function tokenActor(): string
+    {
+        return Actors::forModel(static::class)
+            ?? throw new \InvalidArgumentException(
+                'No Flarion actor is configured for [' . static::class . ']. Add one to config/flarion.php.'
+            );
     }
 
     /**
@@ -29,7 +44,35 @@ trait Tokenable
      */
     public function createToken(string $name, $expireAt = null, array $abilities = ['*']): NewAccessToken
     {
-        return app(PersonalAccessToken::class)->createToken($this, $name, $abilities, $expireAt);
+        return app(PersonalAccessToken::class)->createToken($this, $name, $abilities, $expireAt, $this->tokenActor());
+    }
+
+    /**
+     * Replace an owned personal access token and revoke the old token.
+     *
+     * @param PersonalAccessToken $oldToken
+     * @return NewAccessToken
+     */
+    public function rotateToken(PersonalAccessToken $oldToken): NewAccessToken
+    {
+        if (
+            $oldToken->actor !== $this->tokenActor()
+            || (string) $oldToken->tokenable_id !== (string) $this->getAuthIdentifier()
+        ) {
+            throw new \InvalidArgumentException('The token does not belong to this user.');
+        }
+
+        $expiresAt = $oldToken->expires_at;
+
+        $newToken = $this->createToken(
+            $oldToken->name,
+            $expiresAt,
+            $oldToken->getAbilitiesAttribute()
+        );
+
+        $oldToken->delete();
+
+        return $newToken;
     }
 
     /**
@@ -57,7 +100,7 @@ trait Tokenable
      * Set the current access token for the user.
      *
      * @param PersonalAccessToken $accessToken
-     * @return $this
+     * @return self
      */
     public function withAccessToken(PersonalAccessToken $accessToken): self
     {

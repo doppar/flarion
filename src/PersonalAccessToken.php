@@ -4,15 +4,31 @@ namespace Doppar\Flarion;
 
 use Phaseolies\Support\Facades\Str;
 use Phaseolies\Database\Entity\Model;
+use Phaseolies\Auth\Authable;
 use DateTimeInterface;
-use App\Models\User;
 
+/**
+ * @property string $actor
+ * @property int $tokenable_id
+ * @property-read \Phaseolies\Auth\Authable|null $tokenable
+ */
 class PersonalAccessToken extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'personal_access_token';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $creatable = [
-        'user_id',
+        'actor',
+        'tokenable_id',
         'name',
         'abilities',
         'lookup_hash',
@@ -38,34 +54,69 @@ class PersonalAccessToken extends Model
     protected $abilitiesArray = null;
 
     /**
-     * Get the access tokens that belong to the user.
+     * Get the model that owns the token, resolved through its actor.
+     *
+     * @return \Phaseolies\Database\Entity\Builder
+     */
+    public function tokenable()
+    {
+        return $this->bindTo(Actors::model($this->actor), 'id', 'tokenable_id');
+    }
+
+    /**
+     * Alias of tokenable() kept so `$token->user` keeps working.
+     *
+     * @return \Phaseolies\Database\Entity\Builder
      */
     public function user()
     {
-        return $this->bindTo(User::class, 'id', 'user_id');
+        return $this->tokenable();
     }
 
     /**
      * Create a new personal access token.
      *
-     * @param \App\Models\User $user
+     * @param \Phaseolies\Auth\Authable $user
      * @param string $name
      * @param array $abilities
+     * @param DateTimeInterface|string|null $expiresAt
+     * @param string|null $actor
      * @return \Doppar\Flarion\NewAccessToken
      */
-    public function createToken(User $user, string $name,  array $abilities = ['*'], ?DateTimeInterface $expiresAt = null): NewAccessToken
+    public function createToken(Authable $user, string $name, array $abilities = ['*'], DateTimeInterface|string|null $expiresAt = null, ?string $actor = null): NewAccessToken
     {
+        $actor ??= Actors::forModel($user::class);
+
+        if ($actor === null) {
+            throw new \InvalidArgumentException(
+                'No Flarion actor is configured for [' . $user::class . ']. Add one to config/flarion.php.'
+            );
+        }
+
+        if (!is_a($user, Actors::model($actor))) {
+            throw new \InvalidArgumentException(
+                'The model [' . $user::class . "] cannot own tokens for the [{$actor}] actor."
+            );
+        }
+
         $token = $this->generateTokenString();
         $expiration = (int) config('flarion.expiration');
 
         $lookupHash = hash_hmac('sha256', $token, config('app.key'));
 
+        $expiresAt = $expiration ? now()->addMinutes($expiration) : $expiresAt;
+
+        if ($expiresAt instanceof DateTimeInterface) {
+            $expiresAt = $expiresAt->format('Y-m-d H:i:s');
+        }
+
         $personalAccessToken = static::create([
-            'user_id' => $user->id,
+            'actor' => $actor,
+            'tokenable_id' => $user->getAuthIdentifier(),
             'name' => $name,
             'abilities' => json_encode($abilities),
             'lookup_hash' => $lookupHash,
-            'expires_at' => $expiration ? now()->addMinutes($expiration) : $expiresAt,
+            'expires_at' => $expiresAt,
         ]);
 
         return new NewAccessToken($personalAccessToken, $token);

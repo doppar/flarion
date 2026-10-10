@@ -13,17 +13,19 @@
 
 ## About Doppar Flarion
 
-> **Note:** This repository contains the core code of the Doppar framework flarion package. If you want to build an application using Doppar, visit the main [Doppar repository](https://github.com/doppar/doppar).
+Flarion provides a lightweight API authentication system for the Doppar framework.
 
-Doppar Flarion is a cutting-edge API authentication and authorization package designed to revolutionize how developers build secure, scalable, and high-performance APIs. With a focus on simplicity, flexibility, and robustness, Doppar Flarion empowers developers to implement authentication flows effortlessly while ensuring top-tier security and efficiency across all layers of their applications.
+Flarion allows each user of Doppar application to generate and manage multiple API tokens. These tokens are stateless and designed for use in mobile apps, third-party clients, or any frontend that communicates via a simple token-based API.
+
+Each token can be assigned specific abilities, defining what the token is allowed to do within the system. This makes it easy to implement fine-grained access control across your API routes, without relying on cookies or session state — fully aligned with Doppar's stateless architecture.
 
 ## Contributing
 
-Thank you for considering contributing to the Doppar framework! The contribution guide can be found in the [Doppar documentation](https://doppar.com/versions/3.x/contributions.html).
+Thank you for considering contributing to the Doppar framework! The contribution guide can be found in the [Doppar documentation](https://doppar.com/versions/4.x/contributions).
 
 ## Code of Conduct
 
-In order to ensure that the Doppar community is welcoming to all, please review and abide by the [Code of Conduct](https://doppar.com/versions/3.x/contributions.html#code-of-conduct).
+In order to ensure that the Doppar community is welcoming to all, please review and abide by the [Code of Conduct](https://doppar.com/versions/4.x/contributions#code-of-conduct).
 
 ## Security Vulnerabilities
 
