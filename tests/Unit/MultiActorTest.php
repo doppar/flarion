@@ -25,6 +25,13 @@ class TokenAuth extends ApiAuthenticate
     }
 }
 
+class PlainAdmin extends \Phaseolies\Auth\Authable
+{
+    protected $table = 'admins';
+
+    protected $connection = 'default';
+}
+
 class MultiActorTest extends DatabaseTestCase
 {
     public function test_actors_are_resolved_from_the_flarion_config()
@@ -113,6 +120,16 @@ class MultiActorTest extends DatabaseTestCase
         $admin = $this->createAdmin();
         $plain = $admin->createToken('a')->plainTextToken;
         $this->pdo->exec('DELETE FROM admins');
+
+        $this->assertFalse((new TokenAuth($plain))->check());
+    }
+
+    public function test_token_whose_owner_model_lacks_the_tokenable_trait_is_rejected()
+    {
+        $admin = $this->createAdmin();
+        $plain = $admin->createToken('a')->plainTextToken;
+
+        Config::set('flarion.actors.admin', ['model' => PlainAdmin::class]);
 
         $this->assertFalse((new TokenAuth($plain))->check());
     }
