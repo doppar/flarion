@@ -38,7 +38,7 @@ class AuthenticateApi implements Middleware
      */
     public function __invoke(Request $request, Closure $next, string ...$parameters): Response
     {
-        [$actors, $ability] = $this->parseParameters($parameters);
+        [$actors, $ability] = $this->parseParameters(array_values($parameters));
 
         if (!$this->auth->check()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);

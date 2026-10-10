@@ -50,13 +50,13 @@ class ApiAuthenticate
 
         $accessToken = PersonalAccessToken::findToken($token);
 
-        if (!$this->isValidAccessToken($accessToken)) {
+        if (!$accessToken || !$this->isValidAccessToken($accessToken)) {
             return null;
         }
 
         $owner = $accessToken->tokenable;
 
-        if (!$owner) {
+        if (!$owner || !method_exists($owner, 'withAccessToken')) {
             return null;
         }
 

@@ -7,6 +7,11 @@ use Phaseolies\Database\Entity\Model;
 use Phaseolies\Auth\Authable;
 use DateTimeInterface;
 
+/**
+ * @property string $actor
+ * @property int $tokenable_id
+ * @property-read \Phaseolies\Auth\Authable|null $tokenable
+ */
 class PersonalAccessToken extends Model
 {
     /**
@@ -50,6 +55,8 @@ class PersonalAccessToken extends Model
 
     /**
      * Get the model that owns the token, resolved through its actor.
+     *
+     * @return \Phaseolies\Database\Entity\Builder
      */
     public function tokenable()
     {
@@ -58,6 +65,8 @@ class PersonalAccessToken extends Model
 
     /**
      * Alias of tokenable() kept so `$token->user` keeps working.
+     *
+     * @return \Phaseolies\Database\Entity\Builder
      */
     public function user()
     {
