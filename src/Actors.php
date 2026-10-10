@@ -81,8 +81,6 @@ class Actors
     /**
      * Find the actor that owns the given model class.
      *
-     * The default actor wins when several actors share the same model.
-     *
      * @param string $model
      * @return string|null
      */
