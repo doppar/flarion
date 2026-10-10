@@ -1,5 +1,14 @@
 # Release Notes
 
+## v4.2.0 - 2026-10-10
+
+### What's Changed
+
+* (feat) Multi-actor API tokens and stricter token sources by [@techmahedy](https://github.com/techmahedy) in https://github.com/doppar/flarion/pull/10
+* Update readme by [@techmahedy](https://github.com/techmahedy) in https://github.com/doppar/flarion/pull/12
+
+**Full Changelog**: https://github.com/doppar/flarion/compare/v4.1.0...v4.2.0
+
 ## v4.1.0 - 2026-09-27
 
 ### What's Changed
