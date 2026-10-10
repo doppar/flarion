@@ -30,7 +30,12 @@ abstract class DatabaseTestCase extends TestCase
         Config::set('app.key', 'base64:7n/+NIB4i3LQ6+ZbrclxuwyEqG5Uprufs90NJGL2pls=');
         Config::set('flarion.expiration', null);
         Config::set('flarion.token_prefix', '');
-        Config::set('auth.actors.api.model', User::class);
+        Config::set('flarion.default', 'api');
+        Config::set('flarion.token_sources', ['header']);
+        Config::set('flarion.actors', [
+            'api' => ['model' => User::class],
+            'admin' => ['model' => Admin::class],
+        ]);
 
         $this->pdo = new PDO('sqlite::memory:');
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -43,9 +48,18 @@ abstract class DatabaseTestCase extends TestCase
             updated_at TEXT
         )');
 
+        $this->pdo->exec('CREATE TABLE admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            created_at TEXT,
+            updated_at TEXT
+        )');
+
         $this->pdo->exec('CREATE TABLE personal_access_token (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
+            actor TEXT NOT NULL,
+            tokenable_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             abilities TEXT,
             lookup_hash TEXT,
@@ -76,6 +90,14 @@ abstract class DatabaseTestCase extends TestCase
         return User::create(array_merge([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ], $attributes));
+    }
+
+    protected function createAdmin(array $attributes = []): Admin
+    {
+        return Admin::create(array_merge([
+            'name' => 'Test Admin',
+            'email' => 'admin@example.com',
         ], $attributes));
     }
 }

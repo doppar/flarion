@@ -54,11 +54,29 @@ class ApiAuthenticate
             return null;
         }
 
+        $owner = $accessToken->tokenable;
+
+        if (!$owner) {
+            return null;
+        }
+
         $this->token = $accessToken;
         $this->token->fill(['last_used_at' => now()]);
         $this->token->save();
 
-        return $this->user = $accessToken->user->withAccessToken($accessToken);
+        return $this->user = $owner->withAccessToken($accessToken);
+    }
+
+    /**
+     * Get the name of the actor the current token was issued for.
+     *
+     * @return string|null
+     */
+    public function actor(): ?string
+    {
+        $this->user();
+
+        return $this->token?->actor;
     }
 
     /**
@@ -68,17 +86,20 @@ class ApiAuthenticate
      */
     protected function getTokenFromRequest()
     {
-        $token = $this->getBearerToken();
+        foreach ((array) config('flarion.token_sources', ['header']) as $source) {
+            $token = match ($source) {
+                'header' => $this->getBearerToken(),
+                'input' => request()->input('api_token'),
+                'cookie' => cookie()->get('api_token'),
+                default => null,
+            };
 
-        if (empty($token)) {
-            $token = request()->input('api_token');
+            if (!empty($token)) {
+                return $token;
+            }
         }
 
-        if (empty($token)) {
-            $token = cookie()->get('api_token');
-        }
-
-        return $token;
+        return null;
     }
 
     /**
@@ -100,6 +121,10 @@ class ApiAuthenticate
     protected function isValidAccessToken($accessToken)
     {
         if (!$accessToken) {
+            return false;
+        }
+
+        if (!Actors::has((string) $accessToken->actor)) {
             return false;
         }
 

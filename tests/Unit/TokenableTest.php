@@ -44,7 +44,7 @@ class TokenableTest extends DatabaseTestCase
         $result = $user->createToken('api-key', null, ['posts:read']);
 
         $this->assertInstanceOf(NewAccessToken::class, $result);
-        $this->assertSame($user->id, $result->accessToken->user_id);
+        $this->assertSame($user->id, $result->accessToken->tokenable_id);
         $this->assertSame('api-key', $result->accessToken->name);
 
         $found = PersonalAccessToken::findToken($result->plainTextToken);

@@ -19,6 +19,20 @@ Flarion allows each user of Doppar application to generate and manage multiple A
 
 Each token can be assigned specific abilities, defining what the token is allowed to do within the system. This makes it easy to implement fine-grained access control across your API routes, without relying on cookies or session state — fully aligned with Doppar's stateless architecture.
 
+## Token Sources
+
+By default Flarion reads the token only from the `Authorization: Bearer` header. Use the `token_sources` option in `config/flarion.php` to accept it from other places. Sources are checked in the order listed, and the first token found is used:
+
+```php
+'token_sources' => ['header', 'input', 'cookie'],
+```
+
+| Source | Reads | Notes |
+| ------ | ----- | ----- |
+| `header` | `Authorization: Bearer <token>` | Recommended. Enabled by default. |
+| `input` | `api_token` in the request body or query string | For clients that cannot set headers, such as `EventSource` or WebSocket handshakes. Prefer the body: query strings leak into server logs, browser history and `Referer` headers. |
+| `cookie` | `api_token` cookie | Browsers send cookies automatically, so add your own CSRF protection to state-changing routes. |
+
 ## Contributing
 
 Thank you for considering contributing to the Doppar framework! The contribution guide can be found in the [Doppar documentation](https://doppar.com/versions/4.x/contributions).

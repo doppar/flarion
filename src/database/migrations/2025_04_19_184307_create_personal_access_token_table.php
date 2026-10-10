@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $model = config('auth.actors.api.model');
-
-        Schema::create('personal_access_token', function (Blueprint $table) use ($model) {
+        Schema::create('personal_access_token', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor($model, true, true);
+            $table->string('actor', 64)->index();
+            $table->unsignedBigInteger('tokenable_id')->index();
             $table->string('name');
             $table->json('abilities')->nullable();
             $table->string('lookup_hash', 64)->unique()->index();

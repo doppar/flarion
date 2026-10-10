@@ -156,7 +156,7 @@ class PersonalAccessTokenTest extends DatabaseTestCase
         $this->assertInstanceOf(NewAccessToken::class, $result);
         $this->assertInstanceOf(PersonalAccessToken::class, $result->accessToken);
         $this->assertIsString($result->plainTextToken);
-        $this->assertSame($user->id, $result->accessToken->user_id);
+        $this->assertSame($user->id, $result->accessToken->tokenable_id);
         $this->assertSame('api-key', $result->accessToken->name);
         $this->assertSame(json_encode(['posts:read']), $result->accessToken->abilities);
         $this->assertSame(['posts:read'], $result->accessToken->getAbilitiesAttribute());
